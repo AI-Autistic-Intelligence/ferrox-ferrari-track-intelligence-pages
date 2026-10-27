@@ -1,0 +1,454 @@
+:root {
+  --bg: #090a0c;
+  --surface: #111317;
+  --card: #16191f;
+  --card-hover: #1c2027;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --rosso: #DC0000;
+  --rosso-glow: rgba(220, 0, 0, 0.35);
+  --giallo: #FED402;
+  --giallo-glow: rgba(254, 212, 2, 0.35);
+  --text: #f0f2f5;
+  --text-muted: #8a919e;
+  --text-dim: #5c6270;
+  --green: #00E676;
+  --sans: 'Titillium Web', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Topbar */
+.header {
+  background: rgba(17, 19, 23, 0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-emblem {
+  width: 38px;
+  height: 38px;
+  background: var(--rosso);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px var(--rosso-glow);
+}
+
+.brand-emblem span {
+  font-family: var(--sans);
+  font-weight: 900;
+  font-size: 19px;
+  color: var(--giallo);
+  letter-spacing: -0.5px;
+}
+
+.brand-text h1 {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.brand-text h1 span {
+  color: var(--rosso);
+}
+
+.brand-text p {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-family: var(--mono);
+}
+
+.session-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+select, button {
+  font-family: var(--sans);
+  font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+select:focus, button:focus {
+  outline: none;
+  border-color: var(--rosso);
+}
+
+button.btn-ferrari {
+  background: var(--rosso);
+  border-color: var(--rosso);
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+button.btn-ferrari:hover {
+  background: #b50000;
+  box-shadow: 0 0 12px var(--rosso-glow);
+}
+
+.api-badges {
+  display: flex;
+  gap: 8px;
+}
+
+.badge {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+}
+
+/* Layout */
+.main-container {
+  max-width: 1780px;
+  margin: 0 auto;
+  padding: 24px;
+  display: grid;
+  gap: 24px;
+}
+
+/* Cards */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title::before {
+  content: '';
+  width: 4px;
+  height: 14px;
+  background: var(--rosso);
+  border-radius: 2px;
+}
+
+.card-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--giallo);
+  background: rgba(254, 212, 2, 0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Grid systems */
+.grid-summary {
+  display: grid;
+  grid-template-columns: 360px 1fr 1fr;
+  gap: 20px;
+}
+
+.grid-dynamics {
+  display: grid;
+  grid-template-columns: 1fr 340px 380px;
+  gap: 20px;
+}
+
+.grid-strategy {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 1400px) {
+  .grid-dynamics { grid-template-columns: 1fr 340px; }
+  .grid-summary { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 990px) {
+  .grid-dynamics { grid-template-columns: 1fr; }
+  .grid-strategy { grid-template-columns: 1fr; }
+}
+
+/* KPI grids */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.kpi {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.kpi label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  display: block;
+}
+
+.kpi .val {
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 3px;
+}
+
+.kpi .val.highlight {
+  color: var(--giallo);
+}
+
+.kpi .val.rosso {
+  color: var(--rosso);
+}
+
+/* Driver cards */
+.driver-card {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  background: rgba(220, 0, 0, 0.05);
+  border: 1px solid rgba(220, 0, 0, 0.25);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.driver-headshot {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid var(--rosso);
+  object-fit: cover;
+  background: #111;
+}
+
+.driver-info h3 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.driver-info .car-num {
+  color: var(--giallo);
+  font-family: var(--mono);
+  font-weight: 900;
+  margin-right: 6px;
+}
+
+/* Telemetry stack */
+.tel-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tel-channel {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.tel-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--mono);
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+/* Replay Gauges */
+.replay-dashboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.gauge-box {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+}
+
+.gauge-box label {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.gauge-box .num {
+  font-family: var(--mono);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.gauge-box .num.gear {
+  color: var(--giallo);
+}
+
+/* Pedals */
+.pedal-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.pedal-fill {
+  height: 100%;
+  width: 0%;
+  transition: width 0.06s linear;
+}
+
+.pedal-thr { background: var(--green); }
+.pedal-brk { background: var(--rosso); }
+
+/* Tables */
+.f1-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.f1-table th {
+  text-align: left;
+  padding: 8px;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.f1-table td {
+  padding: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-family: var(--mono);
+}
+
+.f1-table tr.ferrari-row {
+  background: rgba(220, 0, 0, 0.12);
+}
+
+.f1-table tr.ferrari-row td:first-child {
+  border-left: 3px solid var(--rosso);
+}
+
+/* Team Radio */
+.radio-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.radio-item {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.radio-meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--giallo);
+  margin-bottom: 4px;
+}
+
+audio {
+  width: 100%;
+  height: 28px;
+  filter: invert(0.85) hue-rotate(180deg);
+}
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 24px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+footer a {
+  color: var(--giallo);
+  text-decoration: none;
+}

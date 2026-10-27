@@ -1,0 +1,22 @@
+{
+  "sessionKey": 11396,
+  "chaser": {
+    "number": 16,
+    "name": "Charles Leclerc",
+    "currentLap": 32,
+    "gapToTarget": 1.85
+  },
+  "target": {
+    "number": 44,
+    "name": "Lewis Hamilton",
+    "currentLap": 32
+  },
+  "prediction": {
+    "probabilityTier": "high",
+    "netLapDelta": -1.45,
+    "pitLossDelta": -0.3,
+    "outlapDelta": -1.15,
+    "projectedGapAfterTargetStop": -0.65,
+    "recommendation": "BOX BOX: Optimal undercut window open. Net gain projected -1.45s."
+  }
+}

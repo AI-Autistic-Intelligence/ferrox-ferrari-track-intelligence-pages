@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ferrox · Scuderia Ferrari Track Intelligence &amp; Vehicle Dynamics</title>
+  <meta name="description" content="Mission-critical track intelligence and vehicle dynamics cockpit for Scuderia Ferrari built exclusively on live public telemetry (OpenF1, Jolpica, Open-Meteo). Zero mock or synthetic data.">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Titillium+Web:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="brand">
+      <div class="brand-emblem" aria-hidden="true"><span>SF</span></div>
+      <div class="brand-text">
+        <h1>Track <span>Intelligence</span> · Scuderia Ferrari</h1>
+        <p>Maranello Vehicle Dynamics &amp; Strategy Cockpit · 100% Genuine Telemetry</p>
+      </div>
+    </div>
+
+    <div class="session-toolbar" role="group" aria-label="Session selector">
+      <select id="year-select" aria-label="Season"></select>
+      <select id="session-select" aria-label="Grand Prix Session"></select>
+      <button class="btn-ferrari" id="load-btn">Load Live Session</button>
+    </div>
+
+    <div class="api-badges" id="api-status">
+      <div class="badge"><span class="badge-dot"></span>OpenF1 Live</div>
+      <div class="badge"><span class="badge-dot"></span>Jolpica-F1</div>
+      <div class="badge"><span class="badge-dot"></span>Open-Meteo</div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div id="alerts"></div>
+
+    <!-- Section 1: Grand Prix & Driver Overview -->
+    <section class="grid-summary">
+      <article class="card" id="session-card">
+        <div class="card-header">
+          <span class="card-title">Grand Prix Overview</span>
+          <span class="card-tag" id="session-badge">LIVE PUBLIC API</span>
+        </div>
+        <div id="session-summary-content">Loading genuine session telemetry...</div>
+      </article>
+
+      <article class="card">
+        <div class="card-header">
+          <span class="card-title">Scuderia Ferrari Drivers</span>
+          <span class="card-tag">SF-24 / SF-25</span>
+        </div>
+        <div id="ferrari-drivers-content">Loading driver telemetry...</div>
+      </article>
+
+      <article class="card">
+        <div class="card-header">
+          <span class="card-title">Speed Trap Velocity Board</span>
+          <span class="card-tag">OpenF1 /laps</span>
+        </div>
+        <div id="speed-traps-content" style="max-height: 260px; overflow-y: auto;">Loading speed traps...</div>
+      </article>
+    </section>
+
+    <!-- Section 2: Real Vehicle Dynamics & G-G Envelope -->
+    <section class="card" aria-label="Vehicle Dynamics Analysis">
+      <div class="card-header">
+        <span class="card-title">Vehicle Dynamics &amp; G-G Friction Envelope</span>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <label style="font-size:12px; color:var(--text-muted);">Driver</label>
+          <select id="dyn-driver"></select>
+          <label style="font-size:12px; color:var(--text-muted);">Lap</label>
+          <input type="number" id="dyn-lap" min="1" max="200" placeholder="fastest" style="width:75px; background:var(--surface); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-family:var(--mono);">
+          <button class="btn-ferrari" id="dyn-load-btn" style="padding:4px 12px; font-size:12px;">Analyze</button>
+        </div>
+      </div>
+
+      <div class="grid-dynamics">
+        <!-- Telemetry Traces Stack -->
+        <div class="tel-stack">
+          <div class="tel-channel">
+            <div class="tel-label"><span>Speed (km/h)</span><span id="label-speed">—</span></div>
+            <div id="chart-speed"></div>
+          </div>
+          <div class="tel-channel">
+            <div class="tel-label"><span>Longitudinal Acceleration G_long (Acc / Brake)</span><span id="label-glong">—</span></div>
+            <div id="chart-glong"></div>
+          </div>
+          <div class="tel-channel">
+            <div class="tel-label"><span>Lateral Acceleration G_lat (Cornering Left / Right)</span><span id="label-glat">—</span></div>
+            <div id="chart-glat"></div>
+          </div>
+          <div class="tel-channel">
+            <div class="tel-label"><span>Throttle (%) &amp; Brake (ON/OFF)</span><span id="label-pedals">—</span></div>
+            <div id="chart-throttle"></div>
+          </div>
+          <div class="tel-channel">
+            <div class="tel-label"><span>DRS (Drag Reduction System) Active Flap</span><span id="label-drs">—</span></div>
+            <div id="chart-drs"></div>
+          </div>
+        </div>
+
+        <!-- G-G Traction Envelope -->
+        <div>
+          <div style="font-size:12px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; display:flex; justify-content:space-between;">
+            <span>G-G Friction Circle</span>
+            <span style="color:var(--giallo); font-family:var(--mono);" id="dyn-gtotal">Peak 0.0G</span>
+          </div>
+          <div id="gg-diagram-container" style="background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:8px; padding:10px; display:flex; justify-content:center;"></div>
+          <div class="kpi-row" style="margin-top:12px;">
+            <div class="kpi"><label>Max Braking</label><div class="val rosso" id="val-max-brake">—</div></div>
+            <div class="kpi"><label>Max Cornering</label><div class="val highlight" id="val-max-lat">—</div></div>
+          </div>
+          <div class="kpi-row">
+            <div class="kpi"><label>DRS Gain</label><div class="val" id="val-drs-delta">—</div></div>
+            <div class="kpi"><label>Top Velocity</label><div class="val" id="val-top-speed">—</div></div>
+          </div>
+        </div>
+
+        <!-- SVG Track Layout with Corner Apexes & Live Replay -->
+        <div>
+          <div style="font-size:12px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; display:flex; justify-content:space-between;">
+            <span>Circuit Geometry &amp; Apexes</span>
+            <span style="color:var(--rosso); font-family:var(--mono);" id="circuit-name">Autodromo</span>
+          </div>
+          <div id="track-map-container" style="background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:8px; padding:10px; display:flex; justify-content:center;"></div>
+          
+          <!-- Live Replay SSE Controls -->
+          <div style="margin-top:12px; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; padding:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size:11px; text-transform:uppercase; font-weight:700; color:var(--text-muted);">Real-Time Lap Replay</span>
+              <div style="display:flex; gap:6px;">
+                <select id="replay-speed" style="padding:2px 6px; font-size:11px;">
+                  <option value="1">1×</option><option value="2">2×</option><option value="4" selected>4×</option><option value="8">8×</option>
+                </select>
+                <button class="btn-ferrari" id="replay-start-btn" style="padding:3px 10px; font-size:11px;">Start</button>
+                <button id="replay-stop-btn" style="padding:3px 8px; font-size:11px;">Stop</button>
+              </div>
+            </div>
+            
+            <div class="replay-dashboard">
+              <div class="gauge-box"><label>Speed</label><div class="num" id="live-speed">—</div></div>
+              <div class="gauge-box"><label>Gear</label><div class="num gear" id="live-gear">—</div></div>
+              <div class="gauge-box"><label>RPM</label><div class="num" id="live-rpm">—</div></div>
+              <div class="gauge-box"><label>G_Lat</label><div class="num" id="live-glat" style="color:var(--giallo);">—</div></div>
+              <div class="gauge-box"><label>G_Long</label><div class="num" id="live-glong" style="color:var(--rosso);">—</div></div>
+              <div class="gauge-box"><label>DRS</label><div class="num" id="live-drs" style="font-size:20px; color:#888;">OFF</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Pit Wall Strategy, Radio & Race Control -->
+    <section class="grid-strategy">
+      <article class="card">
+        <div class="card-header">
+          <span class="card-title">Pit Window Undercut Simulator</span>
+          <span class="card-tag">Stint OLS Model</span>
+        </div>
+        <div id="undercut-container">
+          <div style="display:flex; gap:10px; margin-bottom:12px; align-items:center;">
+            <label style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">Chaser</label>
+            <select id="undercut-chaser"></select>
+            <label style="font-size:11px; color:var(--text-muted); text-transform:uppercase;">Target</label>
+            <select id="undercut-target"></select>
+            <button class="btn-ferrari" id="undercut-btn" style="padding:4px 10px; font-size:11px;">Simulate</button>
+          </div>
+          <div id="undercut-results">Select cars and run simulation based on real stint pace degradation.</div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-header">
+          <span class="card-title">Ferrari Team Radio</span>
+          <span class="card-tag">Official F1 CDN Audio</span>
+        </div>
+        <div class="radio-feed" id="radio-container">Loading team radio clips...</div>
+      </article>
+
+      <article class="card">
+        <div class="card-header">
+          <span class="card-title">Race Control &amp; Neutralisations</span>
+          <span class="card-tag">OpenF1 /race_control</span>
+        </div>
+        <div style="max-height: 280px; overflow-y: auto;" id="race-control-container">Loading race control events...</div>
+      </article>
+    </section>
+
+    <!-- Section 4: Championship Standings & Maranello Headquarters -->
+    <section class="grid-strategy">
+      <article class="card" style="grid-column: span 2;">
+        <div class="card-header">
+          <span class="card-title">Formula 1 World Championship Standings</span>
+          <span class="card-tag">Jolpica-F1 (Ergast v2)</span>
+        </div>
+        <div id="championship-container" style="overflow-x: auto;">Loading championship tables...</div>
+      </article>
+
+      <article class="card">
+        <div class="card-header">
+          <span class="card-title">Gestione Sportiva Maranello HQ</span>
+          <span class="card-tag">Via Enzo Ferrari 27</span>
+        </div>
+        <div id="maranello-container">Loading Maranello weather...</div>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <strong>Data Provenance Policy:</strong> Timing, real telemetry, vehicle dynamics, team radio audio and race control derived strictly from
+    <a href="https://openf1.org" target="_blank" rel="noopener">OpenF1 Public API</a>. Championship standings from
+    <a href="https://github.com/jolpica/jolpica-f1" target="_blank" rel="noopener">Jolpica-F1</a>. Trackside and Maranello weather from
+    <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>. Every number and waveform on this page is authentic and traceable; zero simulated or synthetic datasets.<br>
+    <em>Ferrox Polyglot Ecosystem · Independent showcase for Scuderia Ferrari S.p.A.</em>
+  </footer>
+</body>
+</html>
